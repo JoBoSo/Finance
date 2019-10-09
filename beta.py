@@ -11,6 +11,7 @@ period = None # valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
 
 ################################################################################
 
+
 # pulls historical market data from Yahoo Finance for security and benchmark
 data = yf.download('{} {}'.format(security, benchmark),  
                    start=start_date, 

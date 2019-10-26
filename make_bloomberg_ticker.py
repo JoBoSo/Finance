@@ -4,7 +4,7 @@
 
 import openpyxl as xl
 
-# make_bloomberg_ticker(ticker) converts ticker, a dot seperated ticker to 
+# make_bloomberg_ticker(ticker) converts ticker, a dot seperated ticker, to 
 #    to a bloomberg ticker that can be used to pull data with bloomberg's
 #    excel add-in.
 # make_bloomberg_ticker: Str --> Str

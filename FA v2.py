@@ -16,7 +16,6 @@ class FinancialAnalysis:
     - self.eps store EPS TTM
     - self.price stores the price as of run time
     '''
-    
     # FinancialAnalysis(stock, benchmark) initiates a new FinancialAnalysis
     #    object for stock and associated benchmark.
     # Str Str --> FinancialAnalysis
@@ -60,15 +59,16 @@ class FinancialAnalysis:
         # risk premiums
         self.erp = self.rs - self.rf # equity risk premium
         self.mrp = self.rm - self.rf # market risk premium        
-        
-              
+               
     # DONE 
     # self.beta() produces the five year beta for stock based on benchmark
     # beta: FinancialAnalsysis --> Float
-    # beta measures a stocks volatility by explaining how the stock has 
-    #    historically moved in relation to a 1% movement in the associated 
-    #    benchmark 
     def beta(self):
+        '''
+        Beta measures a stocks volatility by explaining how the stock has 
+        historically moved in relation to a 1% movement in the associated 
+        benchmark.
+        '''
         # 1. inner merge 'Returns %' for stock and benchmark
         left = self.stock_data[['Return %']]
         right = self.benchmark_data[['Return %']]
@@ -81,16 +81,18 @@ class FinancialAnalysis:
         beta = cov / var
         return beta
     
-    
-    # DONE -- but description wip
-    # self.capm() produces the capital asset pricing model
+    # DONE
+    # self.capm() produces the expected return on the stocks capital assests
+    #    according to the capital asset pricing model.
     # FinancialAnalysis --> Float
-    # def
     def capm(self):
+        '''
+        CAPM generates the cost of equity for securities given the risk of
+        those assets and the cost of capital.
+        '''
         beta = self.beta()
         capm = self.rf + (beta * self.mrp)
         return capm
-    
     
     # DONE
     # self.div_history() produces a dataframe containing dividends paid and
@@ -99,7 +101,6 @@ class FinancialAnalysis:
     def div_history(self):
         divs = self.stock_data[['Dividends']].query('Dividends > 0')
         return divs
-    
     
     # DONE
     # self.div_growth() produces the average growth rate of dividend payments
@@ -117,31 +118,38 @@ class FinancialAnalysis:
         avg_change = np.mean(np.array(changes))
         return avg_change
     
-    
-    #
-    # self.ddm() produces
+    # DONE
+    # self.ddm() produces the fair value of stock according to the assumptions
+    #    of the dividend discount model
     # FinancialAnalysis --> Float
-    # def
     def ddm(self):
+        '''
+        DDM is based on the theory that a company's value is the present value
+        of its future dividend payments in perpetuity.
+        '''
         equity_cost = self.capm()
         div_growth = self.div_growth()
         next_div = self.div * (1 + div_growth)
         value = next_div / (equity_cost - div_growth)
         return value
         
-        
-    # produces the expected return using approach
-    # approach is one of: earnings-based, div-based
+    # DONE
+    # alt_rs(self, approach): produces the expected stock return according to
+    #    chosen approach. It is an alternative to self.rs.
+    # requires: approach is one of: earnings-based, div-based
     # FinancialAnalysis Str --> Float
-    def alternate_rs(self, approach):
+    def alt_rs(self, approach):
         if approach == 'earnings-based':
             return self.eps / self.price
         elif approach == 'div-based':
             g = self.div_growth()
             return self.div_rate + g           
     
-    #
-    # requires: unit is one of 'percent', 'dollar'
+    # DONE
+    # self.roi(buy_price, commission, quantity, unit) produces the return on
+    #    investment in stock given buy_price, commission, quantity, and unit.
+    # requires: unit is one of: percent, dollar
+    # roi: FinancialAnalysis Num Num Num Str --> Num
     # note: uses price as of time the FA object was created
     def roi(self, buy_price, commission, quantity, unit):
         cost = (buy_price * quantity) + commission
@@ -152,13 +160,34 @@ class FinancialAnalysis:
             roi = mv - cost           
         return roi
     
-    
-    # computes the number of days required to liquidate a position of size
-    #    quantity assuming you can capture 20% of the 3 month ADV.
+    # DONE
+    # self.d2l(quantity) computes the number of days required to liquidate a
+    #    position of size quantity assuming you can capture 20% of the 3 month 
+    #    ADV.
+    # d2l: FinancialAnalysis Num --> Num
     def d2l(self, quantity):
-        adv_3m = self.info['averageDailyVolume3Month']
+        adv_3m = self.adv3m
         d2l = quantity / (adv_3m * .2)
         return d2l
+    
+    # 
+    # self.sigma(periods) produces standard deviation of returns over 
+    #     of returns in self.stock_data
+    # period is one of: 1yr, 3yr, 5yr
+    # -->
+    # def
+    def sigma(self, period):
+        pass
+    
+    #
+    #
+    #
+    def summary(self):
+        data = {'Beta': self.beta(),
+                'CAPM': self.capm()}
+        summary = pd.DataFrame(data)
+       
+    
     
     ''''
     # returns world exchange indices from Yahoo Finance
@@ -171,27 +200,7 @@ class FinancialAnalysis:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, “html.parser”)
         soup.findAll('a')
-    '''
-    
-    # 
-    # self.sigma(): sigma produces a df containing the overall and annual standard deviations 
-    #     of returns in self.stock_data
-    # -->
-    # def
-    def sigma(self):
-        pass
-    
-    def summary(self):
-        data = {'Beta': self.beta(),
-                'CAPM': self.capm()}
-        summary = pd.DataFrame(data)
-       
-    def sector_beta(sector):
-        pass
-    
-    def unlevered_beta(self):
-        pass
-    
+     '''
 
 tsla = FinancialAnalysis('TSLA','^GSPC')
 baba = FinancialAnalysis('BABA','^GSPC')
@@ -203,13 +212,50 @@ amzn = FinancialAnalysis('AMZN','^GSPC')
 nflx = FinancialAnalysis('NFLX','^GSPC')
 goog = FinancialAnalysis('GOOG','^GSPC')
 
+igv = FinancialAnalysis('IGV','^GSPC')
+ihf = FinancialAnalysis('IHF','^GSPC')
 
+'''
+related project ideas:
+- test validity of valuatin models for stocks
+- how do higher/lower rates of unemployment relate to recession timing
+- a beta analysis class with sector beta, unlevered beta, equity beta, trailing betas, and MORE
+'''
 
 class MarketDataGraphs: 
 
     # produces a graph with bollnger bands
     def bollinger_bands(self):
         pass
+    
+    #
+    # self.sml() produces the security market line (ie a graph of capm)
+    # 
+    def sml(self):
+        pass
+    
+    '''
+    capital allocaiton line
+    capital market line
+    efficient frontier
+    security characteristic line
+    
+    # sloppy - cleanup graph
+    #
+    #
+    #
+    import matplotlib.pyplot as plt
+    def plot_div_hist(self):
+        divs = self.div_history()
+        # make index a col since x axis can't be the index
+        divs['Date'] = divs.index
+        # make dates numberic as is required by df.plot()
+        num_date = lambda date: int(str(date)[2:4] + str(date)[5:7] + str(date)[8:10])
+        divs['Date'] = divs['Date'].apply(num_date)
+        print(divs)
+        graph = divs.plot(x = 'Date', y = 'Dividends', kind = 'scatter')
+        return graph
+    '''
 
 
 class PortfolioAnalysis:
@@ -237,6 +283,9 @@ class PortfolioAnalysis:
         pass
     
     def remove_security(security):
+        pass
+        
+    def portfolio_history():
         pass
     
     def edit_position([[order type: bought, sold], security, quantity, price, commision, date]):

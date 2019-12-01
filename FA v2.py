@@ -198,13 +198,12 @@ class FinancialAnalysis:
     def wei(self):
         url = 'https://ca.finance.yahoo.com/world-indices/'
         response = requests.get(url)
-        soup = BeautifulSoup(response.text, ìhtml.parserî)
+        soup = BeautifulSoup(response.text, ‚Äúhtml.parser‚Äù)
         soup.findAll('a')
      '''
 
 tsla = FinancialAnalysis('TSLA','^GSPC')
 baba = FinancialAnalysis('BABA','^GSPC')
-corus = FinancialAnalysis('CJR-B.TO','^GSPC')
 
 fb = FinancialAnalysis('FB','^GSPC')
 aapl = FinancialAnalysis('AAPL','^GSPC')
@@ -212,8 +211,6 @@ amzn = FinancialAnalysis('AMZN','^GSPC')
 nflx = FinancialAnalysis('NFLX','^GSPC')
 goog = FinancialAnalysis('GOOG','^GSPC')
 
-igv = FinancialAnalysis('IGV','^GSPC')
-ihf = FinancialAnalysis('IHF','^GSPC')
 
 '''
 related project ideas:

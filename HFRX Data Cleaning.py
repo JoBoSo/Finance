@@ -28,8 +28,6 @@ from functools import reduce
 
 data = pd.read_excel("HFRX Data.xlsx")
 
-# $ $ $ 1. Assign each index it's own column $ $ $ #
-
 # Get the set of indicies
 indicies = set(data['Ticker'].values)
 
